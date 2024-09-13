@@ -5,7 +5,7 @@ import Box from "./components/box-component.js";
 import SelectedMovieDetail from "./components/selected-movie-detail.component";
 import ErrorMessage from "./components/error-message.component";
 import WatchedSummary from "./components/watched-summary.component";
-import { key as KEY } from "./util.js";
+import { key as KEY } from "./utils/util.js";
 
 const tempMovieData = [
   {
@@ -69,6 +69,9 @@ export default function App() {
   const handleAddWatched = (movie) => {
     setWatched((watched) => [...watched, movie]);
   };
+  const handleDeleteWateched = (id) => {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  };
 
   useEffect(() => {
     async function fetchMovies() {
@@ -122,11 +125,15 @@ export default function App() {
               selectedId={selectedId}
               onCloseMovie={handleCloseMovie}
               onAddWatch={handleAddWatched}
+              watched={watched}
             />
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMovieList watched={watched} />
+              <WatchedMovieList
+                watched={watched}
+                onDeleteWatched={handleDeleteWateched}
+              />
             </>
           )}
         </Box>
@@ -159,22 +166,6 @@ const Main = ({ children }) => {
   return <main className="main">{children}</main>;
 };
 
-const WatchedBox = ({ children }) => {
-  const [isOpen2, setIsOpen2] = useState(true);
-
-  return (
-    <div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen2((open) => !open)}
-      >
-        {isOpen2 ? "–" : "+"}
-      </button>
-      {isOpen2 && children}
-    </div>
-  );
-};
-
 const MovieList = ({ movies, onMovieSelect }) => {
   return (
     <ul className="list list-movies">
@@ -200,19 +191,23 @@ const Movie = ({ movie, onMovieSelect }) => {
   );
 };
 
-const WatchedMovieList = ({ watched }) => {
+const WatchedMovieList = ({ watched, onDeleteWatched }) => {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <WatchedMovie movie={movie} key={movie.imdbID} />
+        <WatchedMovie
+          movie={movie}
+          key={movie.imdbID}
+          onDeleteWatched={onDeleteWatched}
+        />
       ))}
     </ul>
   );
 };
 
-const WatchedMovie = ({ movie }) => {
+const WatchedMovie = ({ movie, onDeleteWatched }) => {
   const { poster, title, imdbRating, userRating, runtime } = movie;
-  console.log(movie);
+
   return (
     <li>
       <img src={poster} alt={`${""} poster`} />
@@ -230,6 +225,12 @@ const WatchedMovie = ({ movie }) => {
           <span>⏳</span>
           <span>{runtime} min</span>
         </p>
+        <button
+          className="btn-delete"
+          onClick={() => onDeleteWatched(movie.imdbID)}
+        >
+          X
+        </button>
       </div>
     </li>
   );
