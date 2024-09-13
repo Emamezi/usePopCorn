@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import StarRating from "./star-rating";
+import Search from "./components/search.component";
+import Loader from "./components/loader.component";
+import Box from "./components/box-component.js";
+import SelectedMovieDetail from "./components/selected-movie-detail.component";
+import ErrorMessage from "./components/error-message.component";
+import WatchedSummary from "./components/watched-summary.component";
+import { key as KEY } from "./util.js";
 
 const tempMovieData = [
   {
@@ -47,11 +53,6 @@ const tempWatchedData = [
     userRating: 9,
   },
 ];
-
-const average = (arr) =>
-  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
-
-const KEY = "eda7f831";
 
 export default function App() {
   const [query, setQuery] = useState("inception");
@@ -133,16 +134,7 @@ export default function App() {
     </>
   );
 }
-const Loader = () => {
-  return <p className="loader">Loading.....</p>;
-};
-const ErrorMessage = ({ message }) => {
-  return (
-    <p className="error">
-      <span>⛔️</span> {message}
-    </p>
-  );
-};
+
 const NavBar = ({ children }) => {
   return <nav className="nav-bar">{children}</nav>;
 };
@@ -162,33 +154,11 @@ const NumResults = () => {
     </p>
   );
 };
-const Search = ({ query, setQuery }) => {
-  return (
-    <input
-      className="search"
-      type="text"
-      placeholder="Search movies..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-    />
-  );
-};
 
 const Main = ({ children }) => {
   return <main className="main">{children}</main>;
 };
 
-const Box = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(true);
-  return (
-    <div className="box">
-      <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
-        {isOpen ? "–" : "+"}
-      </button>
-      {isOpen && children}
-    </div>
-  );
-};
 const WatchedBox = ({ children }) => {
   const [isOpen2, setIsOpen2] = useState(true);
 
@@ -227,124 +197,6 @@ const Movie = ({ movie, onMovieSelect }) => {
         </p>
       </div>
     </li>
-  );
-};
-
-const SelectedMovieDetail = ({ selectedId, onCloseMovie, onAddWatch }) => {
-  const [movie, setMovie] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const {
-    Actors: actors,
-    Poster: poster,
-    Plot: plot,
-    // Rating: rating,
-    Director: director,
-    Details: details,
-    Runtime: runtime,
-    Year: year,
-    Title: title,
-    Genre: genre,
-    Released: released,
-    imdbRating,
-  } = movie;
-
-  const handleAdd = () => {
-    const watchedMovie = {
-      imdbID: selectedId,
-      title,
-      year,
-      poster,
-      imdbRating: Number(imdbRating),
-      runtime: Number(runtime.split(" ").at(0)),
-    };
-    onAddWatch(watchedMovie);
-  };
-
-  useEffect(
-    function () {
-      const getMovieDetails = async () => {
-        try {
-          setIsLoading(true);
-          const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
-          );
-          const data = await res.json();
-
-          setMovie(data);
-          setIsLoading(false);
-        } catch (error) {}
-      };
-      getMovieDetails();
-    },
-    [selectedId]
-  );
-  return (
-    <div className="details">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <header>
-            <button className="btn-back" onClick={onCloseMovie}>
-              &larr;
-            </button>
-            <img src={poster} alt={title} />
-            <div className="details-overview">
-              <h2>{details}</h2>
-              <p>
-                {released} &bull; {runtime}
-              </p>
-              <p>{genre}</p>
-              <p>
-                <span>⭐️</span> {imdbRating} imdbRating
-              </p>
-            </div>
-          </header>
-          <section>
-            <div className="rating">
-              <StarRating maxRating={10} size={24} />
-              <button className="btn-add" onClick={handleAdd}>
-                Add Watched
-              </button>
-            </div>
-            <p>
-              <em> {plot}</em>
-            </p>
-            <p>Actors {actors}</p>
-            <p>Directed By {director}</p>
-          </section>
-        </>
-      )}
-    </div>
-  );
-};
-
-const WatchedSummary = ({ watched }) => {
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
-  return (
-    <div className="summary">
-      <h2>Movies you watched</h2>
-      <div>
-        <p>
-          <span>#️⃣</span>
-          <span>{watched.length} movies</span>
-        </p>
-        <p>
-          <span>⭐️</span>
-          <span>{avgImdbRating}</span>
-        </p>
-        <p>
-          <span>🌟</span>
-          <span>{avgUserRating}</span>
-        </p>
-        <p>
-          <span>⏳</span>
-          <span>{avgRuntime} min</span>
-        </p>
-      </div>
-    </div>
   );
 };
 
