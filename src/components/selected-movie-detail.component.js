@@ -48,6 +48,7 @@ const SelectedMovieDetail = ({
     onCloseMovie();
   };
 
+  //useEffect: getting movie detail upon component mounting
   useEffect(
     function () {
       const getMovieDetails = async () => {
@@ -66,6 +67,8 @@ const SelectedMovieDetail = ({
     },
     [selectedId]
   );
+
+  //change page title to selected movie upon mount
   useEffect(
     function () {
       if (!title) return;
@@ -73,10 +76,23 @@ const SelectedMovieDetail = ({
 
       return function () {
         document.title = "UsePopcorn";
-        console.log(`Clean up for movie ${title}`);
       };
     },
     [title]
+  );
+
+  //close movie detail upon esc button press
+  useEffect(
+    function () {
+      const closeOnEscsape = (e) => {
+        if (e.key === "Escape") {
+          onCloseMovie();
+        }
+      };
+      document.addEventListener("keydown", closeOnEscsape);
+      return () => document.removeEventListener("keydown", closeOnEscsape);
+    },
+    [onCloseMovie]
   );
   return (
     <div className="details">

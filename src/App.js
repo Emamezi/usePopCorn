@@ -55,7 +55,7 @@ const tempWatchedData = [
 ];
 
 export default function App() {
-  const [query, setQuery] = useState("inception");
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +73,7 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   };
 
+  //Fetch movies request
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -106,6 +107,7 @@ export default function App() {
       setError("");
       return;
     }
+    handleCloseMovie();
     fetchMovies();
 
     return () => controller.abort();
