@@ -5,6 +5,8 @@ import Box from "./components/box-component.js";
 import SelectedMovieDetail from "./components/selected-movie-detail.component";
 import ErrorMessage from "./components/error-message.component";
 import WatchedSummary from "./components/watched-summary.component";
+import WatchedMovieList from "./components/watched-movie-list.component.js";
+import Movie from "./components/movie.js";
 import { key as KEY } from "./utils/util.js";
 
 const tempMovieData = [
@@ -183,65 +185,5 @@ const MovieList = ({ movies, onMovieSelect }) => {
         <Movie movie={movie} key={movie.imdbID} onMovieSelect={onMovieSelect} />
       ))}
     </ul>
-  );
-};
-
-const Movie = ({ movie, onMovieSelect }) => {
-  return (
-    <li onClick={() => onMovieSelect(movie.imdbID)}>
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
-      <h3>{movie.Title}</h3>
-      <div>
-        <p>
-          <span>🗓</span>
-          <span>{movie.Year}</span>
-        </p>
-      </div>
-    </li>
-  );
-};
-
-const WatchedMovieList = ({ watched, onDeleteWatched }) => {
-  return (
-    <ul className="list">
-      {watched.map((movie) => (
-        <WatchedMovie
-          movie={movie}
-          key={movie.imdbID}
-          onDeleteWatched={onDeleteWatched}
-        />
-      ))}
-    </ul>
-  );
-};
-
-const WatchedMovie = ({ movie, onDeleteWatched }) => {
-  const { poster, title, imdbRating, userRating, runtime } = movie;
-
-  return (
-    <li>
-      <img src={poster} alt={`${""} poster`} />
-      <h3>{title}</h3>
-      <div>
-        <p>
-          <span>⭐️</span>
-          <span>{imdbRating}</span>
-        </p>
-        <p>
-          <span>🌟</span>
-          <span>{userRating}</span>
-        </p>
-        <p>
-          <span>⏳</span>
-          <span>{runtime} min</span>
-        </p>
-        <button
-          className="btn-delete"
-          onClick={() => onDeleteWatched(movie.imdbID)}
-        >
-          X
-        </button>
-      </div>
-    </li>
   );
 };
