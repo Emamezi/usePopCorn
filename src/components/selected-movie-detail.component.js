@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Loader from "./loader.component";
 import StarRating from "../star-rating";
 import { key as KEY } from "../utils/util.js";
+import { useKey } from "../useKey.js";
 
 const SelectedMovieDetail = ({
   selectedId,
@@ -12,6 +13,12 @@ const SelectedMovieDetail = ({
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
+  const countRef = useRef(0);
+  // const KEY = "eda7f831";
+
+  useEffect(() => {
+    if (userRating) countRef.current = countRef.current + 1;
+  }, [userRating]);
 
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
 
@@ -43,6 +50,7 @@ const SelectedMovieDetail = ({
       poster,
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ").at(0)),
+      countedUserDecision: countRef.current,
     };
     onAddWatch(watchedMovie);
     onCloseMovie();
@@ -82,18 +90,8 @@ const SelectedMovieDetail = ({
   );
 
   //close movie detail upon esc button press
-  useEffect(
-    function () {
-      const closeOnEscsape = (e) => {
-        if (e.key === "Escape") {
-          onCloseMovie();
-        }
-      };
-      document.addEventListener("keydown", closeOnEscsape);
-      return () => document.removeEventListener("keydown", closeOnEscsape);
-    },
-    [onCloseMovie]
-  );
+  useKey("Escape", onCloseMovie);
+
   return (
     <div className="details">
       {isLoading ? (

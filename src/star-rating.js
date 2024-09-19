@@ -46,11 +46,11 @@ const StarRating = ({
           />
         ))}
       </div>
-      {/* <p style={textStyle}>
-        {message.length === maxRating
+      <p style={textStyle}>
+        {/* {message.length === maxRating
           ? message[tempRating - 1]
-          : tempRating || rating || ""}
-      </p> */}
+          : tempRating || rating || ""} */}
+      </p>
     </div>
   );
 };
